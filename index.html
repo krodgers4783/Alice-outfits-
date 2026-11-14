@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Does It Match?">
+<meta name="theme-color" content="#ffe27a">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Does It Match?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: playful, warm, talks to a 9-year-old like a crafty best friend
+   IDEA: a felt-and-stitches craft table; Purl the cat is the stylist
+   PICTURE: Purl with a yarn ball + speech bubble; bottoms drawn as felt cut-outs
+   COLOUR and TYPE: sunny yellow felt, teal support, hot-pink accent; Fredoka throughout
+   LAYOUT: one column: Purl, form card, verdict card, three idea cut-outs */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffe27a,#123b40);--dot:light-dark(#ffd54a,#164a50);
+--card:light-dark(#fffaf0,#1b4f56);--ink:light-dark(#2a2340,#fdf6e3);--soft:light-dark(#5d5578,#cfe6e3);
+--teal:light-dark(#178a8a,#5fd3c7);--pink:#ff4f8b;--stitch:light-dark(#f2a7c3,#5fd3c7);--field:light-dark(#fff,#123b40)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg) radial-gradient(var(--dot) 2px,transparent 2.5px) 0 0/22px 22px;color:var(--ink);
+font:17px/1.5 Fredoka,"Trebuchet MS",system-ui,sans-serif;overflow-x:clip;min-height:100vh;
+padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 48px}
+.hero{display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px;align-items:end}
+.purl{width:130px;height:140px}
+.purl.bounce{animation:hop .6s ease 2}
+@keyframes hop{50%{transform:translateY(-14px) rotate(-4deg)}}
+@media(prefers-reduced-motion:reduce){.purl.bounce{animation:none}}
+.bubble{background:var(--card);border-radius:22px;padding:14px 16px;position:relative;margin-bottom:34px;
+box-shadow:0 4px 0 rgba(0,0,0,.12);outline:2.5px dashed var(--stitch);outline-offset:-8px}
+.bubble:after{content:"";position:absolute;left:-12px;bottom:18px;border:12px solid transparent;border-right-color:var(--card);border-left:0}
+.bubble p{margin:0;font-size:16px}
+h1{font-size:clamp(34px,9vw,46px);line-height:1.05;margin:6px 0 2px;font-weight:700;text-wrap:balance;color:var(--ink)}
+.sub{margin:0 0 16px;color:var(--soft);font-size:16px}
+.card{background:var(--card);border-radius:26px;padding:22px 20px;margin-top:16px;position:relative;
+box-shadow:0 6px 0 rgba(0,0,0,.12);outline:2.5px dashed var(--stitch);outline-offset:-10px}
+label{display:block;font-weight:600;font-size:18px;margin:4px 0 6px}
+input{width:100%;font:inherit;font-size:18px;padding:13px 16px;border-radius:16px;border:2.5px solid var(--teal);background:var(--field);color:var(--ink);min-height:52px}
+input:focus{outline:3px solid var(--pink);outline-offset:2px}
+.field{margin-bottom:14px}
+button{font:inherit;font-weight:600;font-size:18px;border:0;border-radius:999px;min-height:52px;padding:12px 22px;cursor:pointer;
+background:var(--pink);color:#fff;box-shadow:0 4px 0 #c22a63;transition:transform .1s}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #c22a63}
+button:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+button.alt{background:var(--teal);box-shadow:0 4px 0 light-dark(#0e5e5e,#2e8f86);color:light-dark(#fff,#123b40)}
+button.ghost{background:transparent;color:var(--ink);box-shadow:none;text-decoration:underline;font-weight:500;font-size:16px}
+.go{width:100%;margin-top:6px}
+.verdict{font-size:clamp(28px,8vw,38px);line-height:1.1;font-weight:700;margin:0 0 6px;text-wrap:balance}
+.yes .verdict{color:var(--teal)}.no .verdict{color:var(--pink)}
+.why{margin:0 0 4px}
+.ideas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+.idea{background:var(--field);border-radius:18px;padding:10px 8px 12px;text-align:center;border:2px solid var(--stitch)}
+.idea svg{width:100%;height:96px}
+.idea b{display:block;font-size:15px;line-height:1.2;font-weight:600;margin-top:4px}
+.idea small{display:block;font-size:13px;color:var(--soft);line-height:1.25;margin-top:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+h2{font-size:22px;margin:18px 0 0;line-height:1.2}
+.note{font-size:14px;color:var(--soft);margin:8px 0 0}
+[hidden]{display:none!important}
+@media(max-width:420px){.ideas{grid-template-columns:minmax(0,1fr)}.idea{display:grid;grid-template-columns:84px minmax(0,1fr);text-align:left;align-items:center;gap:10px}.idea svg{height:80px}}
+.pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:6px}
+.pick button{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:150px;font-size:22px;border-radius:24px}
+.pick svg{width:72px;height:72px}
+.mode{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:-4px 0 10px;font-weight:600;color:var(--teal)}
+.mode button{min-height:44px;padding:6px 10px}
+.ideas.one{grid-template-columns:minmax(0,1fr)}.ideas.one .idea{display:grid;grid-template-columns:96px minmax(0,1fr);text-align:left;align-items:center;gap:12px}.ideas.one .idea b{font-size:18px}
+.thumb{display:inline-flex;align-items:center;gap:6px;margin-top:8px;min-height:44px;padding:6px 14px;font-size:15px;background:var(--card);color:var(--teal);border:2px solid var(--teal);box-shadow:none}
+.thumb svg{width:20px;height:20px}.thumb:active{transform:none;box-shadow:none}
+button svg.ic{width:22px;height:22px;vertical-align:-4px;margin-right:6px}
+.idea.chosen{border:3px solid var(--pink);background:light-dark(#fff0f6,#2a5d63)}
+.done .verdict{color:var(--pink)}
+.stage{position:fixed;inset:0;z-index:50;pointer-events:none;background:light-dark(rgba(255,226,122,.55),rgba(18,59,64,.6));animation:fade .4s both}
+@keyframes fade{from{opacity:0}}
+.stage.ready{pointer-events:auto;cursor:pointer}
+.stage>*{position:absolute;left:0;top:0}
+.stage .ball{width:48px;height:48px}.stage .runner{width:130px;height:140px}.stage .runner .yarn{display:none}
+.endb{left:50%!important;top:auto!important;bottom:calc(190px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(320px,86vw);text-align:center;
+background:var(--card);border-radius:22px;padding:14px 18px;font-size:20px;font-weight:600;box-shadow:0 6px 0 rgba(0,0,0,.15);outline:2.5px dashed var(--stitch);outline-offset:-8px;opacity:0;transition:opacity .4s}
+.endb.on{opacity:1}.endb small{display:block;font-size:14px;font-weight:400;color:var(--soft);margin-top:4px}
+.endb:after{content:"";position:absolute;left:63px;bottom:-12px;border:12px solid transparent;border-top-color:var(--card);border-bottom:0}
+.hideyarn .yarn{opacity:0}
+.chip{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:999px;background:var(--teal);color:light-dark(#fff,#123b40);font-size:13px;font-weight:600}
+.m{display:none}.purl[data-mood=happy] .m-happy,.purl[data-mood=think] .m-think,.purl[data-mood=hmm] .m-hmm{display:inline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <svg class="purl" id="purl" data-mood="happy" viewBox="0 0 130 140" aria-hidden="true">
+      <ellipse cx="62" cy="132" rx="46" ry="6" fill="rgba(0,0,0,.15)"/>
+      <path d="M96 118c22-4 26-30 12-38" fill="none" stroke="#f08a3c" stroke-width="9" stroke-linecap="round"/>
+      <ellipse cx="62" cy="102" rx="36" ry="30" fill="#f6a04d"/>
+      <ellipse cx="62" cy="110" rx="20" ry="18" fill="#fde0bd"/>
+      <path d="M24 44 L30 8 L50 30Z M100 44 L94 8 L74 30Z" fill="#f6a04d"/>
+      <path d="M31 36 L33 18 L44 30Z M93 36 L91 18 L80 30Z" fill="#ff9ec4"/>
+      <circle cx="62" cy="54" r="38" fill="#f6a04d"/>
+      <path d="M50 20q12 6 24 0M46 28q16 6 32 0" stroke="#e07a2c" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="62" cy="68" rx="22" ry="16" fill="#fde0bd"/>
+      <ellipse cx="47" cy="52" rx="6" ry="7.5" fill="#2a2340"/><ellipse cx="77" cy="52" rx="6" ry="7.5" fill="#2a2340"/>
+      <circle cx="49" cy="49" r="2.2" fill="#fff"/><circle cx="79" cy="49" r="2.2" fill="#fff"/>
+      <ellipse cx="38" cy="66" rx="6" ry="4" fill="#ff9ec4" opacity=".7"/><ellipse cx="86" cy="66" rx="6" ry="4" fill="#ff9ec4" opacity=".7"/>
+      <path d="M58 62h8l-4 5z" fill="#ff5f8f"/>
+      <path class="m m-happy" d="M54 70q4 6 8 0q4 6 8 0" stroke="#2a2340" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle class="m m-think" cx="62" cy="73" r="3.5" fill="#2a2340"/>
+      <path class="m m-hmm" d="M55 74q7-5 14 0" stroke="#2a2340" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M22 62h16M22 70h16M86 62h16M86 70h16" stroke="#7a4a2a" stroke-width="1.6" stroke-linecap="round"/>
+      <g class="yarn"><circle cx="30" cy="112" r="17" fill="#ff4f8b"/>
+      <path d="M16 106q14 6 28-4M15 115q16 6 30-6M20 124q12 2 22-10M24 97q2 14 18 26" stroke="#c22a63" stroke-width="2" fill="none"/>
+      <path d="M46 116q20 10 6 22" stroke="#ff4f8b" stroke-width="2.5" fill="none"/></g>
+      <ellipse cx="40" cy="128" rx="10" ry="7" fill="#f6a04d"/><ellipse cx="84" cy="128" rx="10" ry="7" fill="#f6a04d"/>
+    </svg>
+    <div class="bubble"><p id="say">Hi Alice! I'm Purl. Dress or top today?</p></div>
+  </div>
+
+  <h1>Does It Match?</h1>
+  <p class="sub">Alice's outfit studio, with Purl the cat</p>
+
+  <section class="card" id="choose">
+    <label>Dress or top today?</label>
+    <div class="pick">
+      <button type="button" data-mode="dress"><svg viewBox="0 0 72 72" aria-hidden="true"><path d="M28 6h16l2 14 12 46H14l12-46z" fill="#fff" opacity=".95"/><path d="M26 20h20" stroke="#ff4f8b" stroke-width="3" stroke-dasharray="3 3"/></svg>Dress</button>
+      <button type="button" class="alt" data-mode="top"><svg viewBox="0 0 72 72" aria-hidden="true"><path d="M24 10l-14 10 6 12 6-4v34h28V28l6 4 6-12-14-10q-6 8-12 0z" fill="#fff" opacity=".95"/></svg>Top</button>
+    </div>
+  </section>
+
+  <form class="card" id="form" autocomplete="off" hidden>
+    <div class="mode"><span id="modeTxt">Wearing a top today</span><button class="ghost" type="button" id="switch">Switch</button></div>
+    <div class="field"><label for="top" id="topLbl">My top</label>
+      <input id="top" placeholder="like: pink shirt with hearts" enterkeyhint="next"></div>
+    <div class="field"><label for="bot" id="botLbl">My bottom</label>
+      <input id="bot" placeholder="like: blue jeans" enterkeyhint="go"></div>
+    <button class="go" type="submit">Check my outfit!</button>
+  </form>
+
+  <section class="card" id="res" hidden aria-live="polite">
+    <p class="verdict" id="verdict"></p>
+    <p class="why" id="why"></p>
+    <div id="pickBox" hidden>
+      <h2 id="pickTitle">Try one of these bottoms instead</h2>
+      <div class="ideas" id="ideas"></div>
+      <div class="row">
+        <button class="alt" type="button" id="again">Try again — I don't have these</button>
+        <button class="ghost" type="button" id="reset">Start over</button>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+    <div class="row" id="moreRow" hidden>
+      <button type="button" id="love"></button>
+      <button class="alt" type="button" id="more">Show me 3 more ideas</button>
+      <button class="ghost" type="button" id="reset2">Start over</button>
+    </div>
+    <div class="row" id="doneRow" hidden>
+      <button class="alt" type="button" id="reset3">Check another outfit</button>
+    </div>
+  </section>
+</div>
+
+<script>
+{
+const NEUTRAL=new Set(['black','white','gray','navy','denim','brown','tan','olive','gold','silver']);
+const BRIGHT=['red','pink','orange','yellow','green','blue','purple','teal'];
+const PHRASES=[['tie dye','rainbow',1],['polka dot','dots',1],['animal print','animal',1],['off white','white'],['light blue','blue'],['baby blue','blue'],['sky blue','blue'],['hot pink','pink'],['bubble gum','pink'],['blue jeans','denim'],['blue jean','denim']];
+const COL={black:'black',white:'white',ivory:'tan',cream:'tan',gray:'gray',grey:'gray',charcoal:'gray',silver:'silver',gold:'gold',
+navy:'navy',denim:'denim',jean:'denim',jeans:'denim',chambray:'denim',brown:'brown',chocolate:'brown',tan:'tan',beige:'tan',khaki:'tan',camel:'tan',oatmeal:'tan',olive:'olive',
+red:'red',maroon:'red',burgundy:'red',crimson:'red',cherry:'red',wine:'red',pink:'pink',fuchsia:'pink',magenta:'pink',rose:'pink',blush:'pink',coral:'pink',salmon:'pink',
+orange:'orange',peach:'orange',rust:'orange',tangerine:'orange',yellow:'yellow',mustard:'yellow',lemon:'yellow',butter:'yellow',
+green:'green',mint:'green',lime:'green',emerald:'green',sage:'green',blue:'blue',cobalt:'blue',periwinkle:'blue',
+teal:'teal',turquoise:'teal',aqua:'teal',purple:'purple',lavender:'purple',lilac:'purple',violet:'purple',plum:'purple',grape:'purple'};
+const PAT={stripe:'stripes',stripes:'stripes',striped:'stripes',stripy:'stripes',stripey:'stripes',dot:'dots',dots:'dots',dotted:'dots',spotted:'dots',
+plaid:'plaid',tartan:'plaid',checkered:'plaid',gingham:'plaid',floral:'floral',flower:'floral',flowers:'floral',flowery:'floral',daisy:'floral',daisies:'floral',
+leopard:'animal',cheetah:'animal',zebra:'animal',tiger:'animal',snakeskin:'animal',camo:'camo',camouflage:'camo',
+sparkly:'sparkle',sparkle:'sparkle',sparkles:'sparkle',sequin:'sparkle',sequins:'sparkle',sequined:'sparkle',glitter:'sparkle',glittery:'sparkle',
+heart:'hearts',hearts:'hearts',star:'stars',stars:'stars',starry:'stars',rainbow:'rainbow',tiedye:'rainbow',multicolor:'rainbow',multicolored:'rainbow',colorful:'rainbow',
+graphic:'graphic',logo:'graphic',picture:'graphic',print:'graphic',printed:'graphic',unicorn:'graphic',dinosaur:'graphic',dino:'graphic',cat:'graphic',kitty:'graphic',kitten:'graphic',
+dog:'graphic',puppy:'graphic',bunny:'graphic',horse:'graphic',butterfly:'graphic',butterflies:'graphic',shark:'graphic',llama:'graphic',panda:'graphic',fox:'graphic',owl:'graphic',penguin:'graphic'};
+const PATCOL={leopard:['tan','brown','black'],cheetah:['tan','brown','black'],tiger:['orange','black'],zebra:['black','white'],camo:['olive','brown'],camouflage:['olive','brown']};
+const PATNAME={stripes:'stripes',dots:'polka dots',plaid:'plaid',floral:'flowers',animal:'animal print',camo:'camo',sparkle:'sparkles',hearts:'hearts',stars:'stars',rainbow:'rainbow colors',graphic:'picture'};
+const FR={};BRIGHT.forEach(c=>FR[c]=new Set());
+[['pink','purple'],['pink','blue'],['pink','green'],['pink','yellow'],['pink','teal'],['red','blue'],['orange','blue'],['orange','teal'],['yellow','blue'],['yellow','purple'],['yellow','teal'],['yellow','green'],['green','blue'],['blue','purple'],['blue','teal'],['purple','teal']]
+.forEach(([a,b])=>{FR[a].add(b);FR[b].add(a)});
+const HEX={black:'#2b2b33',white:'#fbfbfb',gray:'#9aa0a6',navy:'#26336b',denim:'#4a6fa5',brown:'#7a4e2d',tan:'#d9bb8c',olive:'#7d7a3a',gold:'#d9ab2c',silver:'#c3c7cc',
+red:'#e03a3a',pink:'#ff82b8',orange:'#ff8f3f',yellow:'#ffd23f',green:'#5cc58a',blue:'#58a8ff',purple:'#a77bf3',teal:'#2bbbad'};
+const SHADES={red:['red','cherry red'],pink:['pink','light pink','hot pink'],orange:['orange','peach'],yellow:['yellow','butter yellow'],green:['mint green','green'],blue:['light blue','royal blue'],purple:['purple','lavender'],teal:['turquoise','teal']};
+const TYPES={top:['leggings','shorts','jeans','joggers','pants','jean shorts','bike shorts','corduroy pants'],dress:['leggings','mini shorts','bike shorts']};
+const BASICS={top:['blue jeans','black leggings','white shorts','gray joggers','jean shorts','khaki shorts','navy pants','black pants','white jeans','gray leggings','tan corduroy pants','black and white striped leggings','black and white checkered pants','leopard print leggings'],
+ dress:['black leggings','white leggings','gray leggings','navy leggings','tan leggings','black mini shorts','white mini shorts','denim mini shorts','gray bike shorts','black bike shorts','black and white striped leggings','leopard print leggings']};
+
+function parse(t){
+  let s=' '+t.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ')+' ';
+  const colors=[],pats=[],words=[];
+  const addC=(c,w)=>{if(!colors.includes(c))colors.push(c);if(w&&!words.includes(w))words.push(w)};
+  const addP=p=>{if(!pats.includes(p))pats.push(p)};
+  PHRASES.forEach(([ph,v,isPat])=>{if(s.includes(' '+ph+' ')){isPat?addP(v):addC(v,ph);s=s.replace(' '+ph+' ',' ')}});
+  s.trim().split(' ').forEach(w=>{
+    const k=COL[w]?w:(COL[w.replace(/s$/,'')]?w.replace(/s$/,''):null);
+    if(k)addC(COL[k],w);
+    const p=PAT[w]||PAT[w.replace(/s$/,'')];
+    if(p){addP(p);(PATCOL[w]||[]).forEach(c=>addC(c))}
+  });
+  if(pats.includes('animal'))pats.splice(pats.indexOf('graphic')>>>0,pats.includes('graphic')?1:0);
+  if(colors.includes('denim')&&colors.length>1&&!/\bdenim\b/.test(s)){colors.splice(colors.indexOf('denim'),1);words.splice(words.findIndex(w=>/^jeans?$/.test(w)),1)}
+  if(words.some(w=>/^jeans?$/.test(w))&&colors.filter(c=>!NEUTRAL.has(c)).join()==='blue'){colors.length=0;colors.push('denim')}
+  if(pats.includes('rainbow'))BRIGHT.forEach(c=>addC(c));
+  const kind=/skirt|tutu|skort|dress/.test(t.toLowerCase())?'skirt':/short/.test(t.toLowerCase())?'shorts':'pants';
+  return {t:t.trim(),colors,words,pats,kind,brights:colors.filter(c=>!NEUTRAL.has(c))};
+}
+const cw=x=>x.words.length?x.words.join(' and '):(x.colors[0]||'');
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const pn=x=>PATNAME[x.pats[0]];
+let N='top';
+const solidNeutral=x=>!x.pats.length&&x.colors.length&&!x.brights.length;
+
+function judge(top,bot){
+  for(const [x,n] of [[top,N],[bot,N==='dress'?'shorts or leggings':'bottom']])
+    if(!x.colors.length&&!x.pats.length)return{state:'ask',msg:`I can't tell what color your ${n} is! Add a color, like "purple ${n===N?(N==='dress'?'dress':'shirt'):'leggings'}," and ask me again.`};
+  const tP=top.pats.length>0,bP=bot.pats.length>0;
+  if(tP&&bP)return{state:'no',msg:`Your ${N} has ${pn(top)} and your ${N==='dress'?'shorts or leggings have':'bottom has'} ${pn(bot)}. Two busy patterns at once is like two parrots squawking at the same time — let one be the star!`};
+  if(solidNeutral(bot))return{state:'yes',msg:`${cap(cw(bot))} is a neutral color, so it goes with almost everything — like a trusty glue stick!`,short:'Neutral — goes with everything'};
+  if(solidNeutral(top))return{state:'yes',msg:`Your ${cw(top)} ${N} is a neutral color, so the ${cw(bot)} gets to be the star of the show!`,short:`Your ${N} lets it shine`};
+  if(tP||bP){
+    const P=tP?top:bot,S=tP?bot:top;
+    if(!P.colors.length)return{state:'ask',msg:`Ooh, ${pn(P)}! What colors are in your ${pn(P)}? Add them (like "pink and white ${pn(P)}") and I'll check again.`};
+    if(!P.brights.length)return{state:'yes',msg:`There are only neutral colors in your ${pn(P)}, so the ${cw(S)} gets to pop — like a zebra wearing a party hat!`,short:'Neutral pattern — easy match'};
+    if(!S.colors.length)return{state:'ask',msg:`What color is your ${tP?(N==='dress'?'shorts or leggings':'bottom'):N}? Add a color and I'll check!`};
+    const hit=S.brights.find(c=>P.brights.includes(c));
+    if(hit)return{state:'yes',msg:`The ${hit} matches the ${hit} in your ${pn(P)} — designers call that "pulling a color." So fancy!`,short:`Pulls the ${hit} from your ${N}`};
+    return{state:'no',msg:`There's no ${cw(S)} in your ${pn(P)}, so these two don't quite go together.`};
+  }
+  const same=bot.brights.find(c=>top.brights.includes(c));
+  if(same&&bot.brights.length===1)return{state:'yes',msg:`Matching ${same}! Twinsies, like two baby penguins.`,short:`Matches your ${same} ${N}`};
+  if(bot.brights.every(b=>top.brights.some(a=>a===b||FR[a].has(b))))
+    return{state:'yes',msg:`${cap(cw(top))} and ${cw(bot)} are color buddies — they look great together, like a flamingo next to a blue pool!`,short:`${cap(bot.brights[0])} + ${top.brights[0]} are buddies`};
+  return{state:'no',msg:`${cap(cw(top))} and ${cw(bot)} are a little bit of a clash — like a cat and a bath!`};
+}
+
+function ideasFor(top){
+  const out=[],seen=new Set();
+  const add=t=>{if(seen.has(t))return;seen.add(t);const b=parse(t),j=judge(top,b);if(j.state==='yes')out.push({t,b,why:j.short})};
+  const K=TYPES[N];BASICS[N].forEach(add);
+  const fams=top.brights.length&&!top.pats.includes('rainbow')?[...new Set(top.brights.flatMap(c=>[c,...FR[c]]))]:BRIGHT;
+  const a=top.brights[0];
+  fams.forEach((c,ci)=>SHADES[c].forEach((sh,i)=>{
+    add(`${sh} ${K[(ci*3+i)%K.length]}`);
+    if(!top.pats.length){const mix=a&&a!==c?`${a} and ${sh}`:`${sh} and white`;
+      add([`${mix} striped leggings`,`${sh} polka dot ${N==='dress'?'mini shorts':'shorts'}`,`${sh} floral leggings`,`${mix} plaid ${N==='dress'?'bike shorts':'pants'}`][(ci+i)%4])}
+  }));
+  for(let i=out.length-1;i>0;i--){const k=Math.floor(Math.random()*(i+1));[out[i],out[k]]=[out[k],out[i]]}
+  // keep the first set varied: one basic, two colorful when possible
+  const plain=out.filter(o=>!o.b.brights.length),fun=out.filter(o=>o.b.brights.length),mixd=[];
+  while(plain.length||fun.length){if(fun.length)mixd.push(fun.shift());if(plain.length)mixd.push(plain.shift());if(fun.length)mixd.push(fun.shift())}
+  return mixd;
+}
+
+function draw(b,i){
+  const main=HEX[b.brights[0]||b.colors[0]||'denim'];
+  const other=b.colors.find(c=>HEX[c]!==main);
+  const sec=other?HEX[other]:(main==='#fbfbfb'?'#ff82b8':'#fbfbfb');
+  const p=b.pats[0],id='p'+i+Math.random().toString(36).slice(2,6);
+  const tile={stripes:`<rect width="12" height="5" fill="${sec}"/>`,dots:`<circle cx="6" cy="6" r="2.6" fill="${sec}"/>`,
+    plaid:`<rect width="12" height="4" fill="${sec}" opacity=".6"/><rect width="4" height="12" fill="${sec}" opacity=".6"/>`,
+    floral:`<g fill="${sec}"><circle cx="6" cy="3.5" r="1.8"/><circle cx="3.5" cy="6.5" r="1.8"/><circle cx="8.5" cy="6.5" r="1.8"/><circle cx="6" cy="8.8" r="1.8"/></g><circle cx="6" cy="6.2" r="1.3" fill="#ffd23f"/>`,
+    animal:`<path d="M2 3q3-2 4 1t-3 3zM8 7q3-1 3 2t-3 1z" fill="${HEX.black}" opacity=".75"/>`}[p]||(p?`<circle cx="6" cy="6" r="2" fill="${sec}"/>`:'');
+  const d={pants:'M18 10H62L68 86H46L40 36L34 86H12Z',skirt:'M24 10H56L74 76H6Z',shorts:'M15 10H65L71 58H46L40 38L34 58H9Z'}[b.kind];
+  const waist=b.kind==='skirt'?'M24 10H56V20H24Z':b.kind==='shorts'?'M15 10H65V20H15Z':'M18 10H62V20H18Z';
+  return `<svg viewBox="0 0 80 92" aria-hidden="true"><defs>${tile?`<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(${p==='stripes'?0:20})">${tile}</pattern>`:''}</defs>
+  <path d="${d}" transform="translate(2 3)" fill="rgba(0,0,0,.18)"/>
+  <path d="${d}" fill="${main}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>${tile?`<path d="${d}" fill="url(#${id})"/>`:''}
+  <path d="${waist}" fill="${main}" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+  <path d="${waist}" fill="none" stroke="${main==='#fbfbfb'?'#ff82b8':'#fff'}" stroke-width="1.6" stroke-dasharray="3 3" transform="translate(0 0)" opacity=".85" style="transform:scale(.92);transform-origin:40px 15px"/></svg>`;
+}
+
+const THUMB='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h4v11H2zM8 21h9.5a2 2 0 0 0 2-1.6l1.4-7A2 2 0 0 0 19 10h-5l.8-4.2A2 2 0 0 0 12.9 3.5L8 9.5z" fill="currentColor"/></svg>';
+const CHEERS=["Have a purr-fect {d}, Alice!","Have a hoppy {d} — just like a bunny!","You look paw-some! Have the best {d}!","Have a roar-some {d}, Alice!","Owl be cheering for you! Have a great {d}!","Have a whale of a {d}, Alice!","Go make something crafty and fun this {d}!","Have an un-bear-lievably good {d}!","You're one cool cat! Have a great {d}!","Have a fin-tastic {d}, Alice!","Have a hoot of a {d}!","Have a tail-wagging good {d}!","Have a sweet-as-honey {d}, busy bee!","You're the cat's pajamas! Happy {d}!"];
+const cheer=()=>{const n=new Date(),day=Math.floor((n-new Date(n.getFullYear(),0,0))/864e5)+n.getFullYear()*366;
+  return CHEERS[day%CHEERS.length].replace('{d}',n.toLocaleDateString('en-US',{weekday:'long'}))};
+function toss(msg,after){
+  const purl=$('purl'),r=purl.getBoundingClientRect(),sc=r.width/130;
+  const W=innerWidth,H=innerHeight,probe=document.createElement('div');
+  probe.style.cssText='position:fixed;bottom:0;height:env(safe-area-inset-bottom)';document.body.appendChild(probe);
+  const sb=probe.offsetHeight;probe.remove();
+  const st=document.createElement('div');st.className='stage';
+  const ball=document.createElementNS('http://www.w3.org/2000/svg','svg');ball.setAttribute('viewBox','-20 -20 40 40');ball.setAttribute('class','ball');
+  ball.innerHTML='<circle r="17" fill="#ff4f8b"/><path d="M-14-6q14 6 28-4M-15 3q16 6 30-6M-10 12q12 2 22-10M-6-15q2 14 18 26" stroke="#c22a63" stroke-width="2" fill="none"/>';
+  const run=purl.cloneNode(true);run.removeAttribute('id');run.setAttribute('class','runner');run.dataset.mood='happy';
+  const bub=document.createElement('div');bub.className='endb';bub.innerHTML=msg+'<small>Tap anywhere to keep going</small>';
+  st.append(ball,run,bub);document.body.appendChild(st);
+  const bx0=r.left+30*sc-24,by0=r.top+112*sc-24,bx1=W/2+20,by1=H-sb-74;
+  const px0=r.left,py0=r.top,px1=Math.max(8,W/2-150),py1=H-sb-150;
+  purl.style.visibility='hidden';
+  const still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const T=(x,y,rot=0)=>`translate(${x}px,${y}px) rotate(${rot}deg)`;
+  const end=()=>{bub.classList.add('on');st.classList.add('ready')};
+  if(still){ball.style.transform=T(bx1,by1);run.style.transform=T(px1,py1);end()}
+  else{
+    const peak=Math.min(by0,by1)-120;
+    ball.animate([{transform:T(bx0,by0)},{transform:T((bx0+bx1)/2,peak,360),offset:.35},{transform:T(bx1,by1,900),offset:.8},{transform:T(bx1+10,by1-24,1000),offset:.9},{transform:T(bx1+14,by1,1080)}],{duration:1300,easing:'ease-in-out',fill:'forwards'});
+    const a=run.animate([{transform:T(px0,py0)},{transform:T(px0+(px1-px0)*.25,py0+(py1-py0)*.25-30,-6)},{transform:T(px0+(px1-px0)*.5,py0+(py1-py0)*.5,4)},{transform:T(px0+(px1-px0)*.75,py0+(py1-py0)*.75-30,-6)},{transform:T(px1,py1)}],{duration:1100,delay:500,easing:'ease-in-out',fill:'both'});
+    a.finished.then(end,end);setTimeout(end,2400);
+  }
+  st.addEventListener('click',()=>{if(!st.classList.contains('ready'))return;st.remove();purl.style.visibility='';after&&after()});
+}
+const $=id=>document.getElementById(id);
+const say=(m,mood)=>{$('say').textContent=m;$('purl').dataset.mood=mood};
+let pool=[],pos=0,round=0;
+
+function showIdeas(n=3){
+  if(pos>=pool.length){pool=ideasFor(curTop);pos=0;round++;$('note').textContent='That was every idea in my sewing basket! Here they are again, all mixed up.'}
+  else $('note').textContent='';
+  const set=pool.slice(pos,pos+n);pos+=n;$('ideas').classList.toggle('one',n===1);$('again').hidden=n===1;
+  $('ideas').innerHTML=set.map((o,i)=>`<div class="idea">${draw(o.b,i)}<div><b>${cap(o.t)}</b><small>${o.why}</small><span class="chip">${o.b.kind==='shorts'?'Shorts':'Pants'}</span><br><button type="button" class="thumb" data-t="${o.t}">${THUMB}I'm wearing this</button></div></div>`).join('');
+}
+let curTop=null;
+function choose(btm){
+  const t=$('top').value.trim();
+  $('res').className='card done';$('verdict').textContent='Outfit picked!';
+  $('why').textContent=`Today's outfit: ${t} + ${btm}. Looking great!`;
+  $('pickBox').hidden=true;$('moreRow').hidden=true;$('doneRow').hidden=false;
+  const c=cheer();say('Wheee! Catch, Purl!','happy');window.scrollTo(0,0);
+  requestAnimationFrame(()=>toss(c,()=>{say(c,'happy');$('res').scrollIntoView({block:'start',behavior:'smooth'})}));
+}
+$('ideas').addEventListener('click',e=>{const b=e.target.closest('.thumb');if(b)choose(b.dataset.t)});
+$('love').addEventListener('click',()=>choose($('bot').value.trim()));
+$('form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const tt=$('top').value.trim(),bt=$('bot').value.trim();
+  if(!tt||!bt){say(`Tell me your ${!tt?N:(N==='dress'?'shorts or leggings':'bottom')} too, please!`,'think');(!tt?$('top'):$('bot')).focus();return}
+  const top=parse(tt),bot=parse(bt),j=judge(top,bot);curTop=top;
+  const res=$('res');res.hidden=false;res.className='card '+(j.state==='yes'?'yes':'no');
+  $('why').textContent=j.msg;$('pickBox').hidden=true;$('moreRow').hidden=true;$('doneRow').hidden=true;$('love').innerHTML=THUMB+"Thumbs up — I'm wearing it!";
+  const purl=$('purl');purl.classList.remove('bounce');
+  if(j.state==='yes'){
+    const w=['Purr-fect match!','Paw-some outfit!','Totally roar-some!','Hoot hoot, it matches!','Un-bear-lievably cute!'];
+    $('verdict').textContent=w[Math.floor(Math.random()*w.length)];
+    say('Yes! You look ready for anything!','happy');void purl.offsetWidth;purl.classList.add('bounce');
+    const same=o=>o.b.kind===bot.kind&&o.b.colors.join()===bot.colors.join()&&o.b.pats.join()===bot.pats.join();
+    pool=ideasFor(top).filter(o=>!same(o));pos=0;
+    $('pickTitle').textContent=N==='dress'?"Purl's bonus idea: you could also wear":"Purl's bonus idea: this would match too";
+    $('pickBox').hidden=false;showIdeas(1);$('moreRow').hidden=false;
+  }else if(j.state==='no'){
+    $('verdict').textContent='Hmm, not quite a match';
+    say(`Don't worry — I picked out some ${N==='dress'?'shorts and leggings':'bottoms'} that go with your ${N}!`,'hmm');
+    $('pickTitle').textContent=N==='dress'?'Try one of these under your dress':'Try one of these bottoms instead';
+    pool=ideasFor(top);pos=0;$('pickBox').hidden=false;showIdeas();
+  }else{
+    $('verdict').textContent='Wait, I need a clue!';say('I need one more clue!','think');
+  }
+  res.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});
+});
+$('again').addEventListener('click',()=>{showIdeas(3);say('No problem! How about these?','think')});
+$('more').addEventListener('click',()=>{$('moreRow').hidden=true;$('pickBox').hidden=false;$('pickTitle').textContent=N==='dress'?'More shorts and leggings for your dress':'More bottoms that go with your top';showIdeas(3)});
+const setMode=m=>{N=m;$('choose').hidden=true;$('form').hidden=false;
+  $('modeTxt').textContent=m==='dress'?'Wearing a dress today':'Wearing a top today';
+  $('topLbl').textContent=m==='dress'?'My dress':'My top';
+  $('botLbl').textContent=m==='dress'?'Shorts or leggings under it':'My bottom';
+  $('top').placeholder=m==='dress'?'like: yellow dress with daisies':'like: pink shirt with hearts';
+  $('bot').placeholder=m==='dress'?'like: white bike shorts':'like: blue jeans';
+  say(m==='dress'?'Ooh, a dress! Tell me your dress and what you are wearing under it.':'A top! Tell me your top and your bottom.','happy');$('top').focus()};
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+const reset=()=>{$('form').reset();$('form').hidden=true;$('res').hidden=true;$('choose').hidden=false;say("Let's try another outfit! Dress or top today?",'happy');window.scrollTo(0,0)};
+$('switch').addEventListener('click',reset);
+$('reset').addEventListener('click',reset);$('reset3').addEventListener('click',reset);$('reset2').addEventListener('click',reset);
+window.__t={parse,judge,ideasFor,setN:m=>N=m};
+}
+</script>
+</body>
+</html>
